@@ -38,6 +38,4 @@
             </p>
         </div>
     </div>
-    This is a test for using github
-    second changes
 </asp:Content>
