@@ -136,6 +136,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="App_Data\WebDatabase.mdf" />
+    <Content Include="App_Data\WebDatabase_log.ldf">
+      <DependentUpon>WebDatabase.mdf</DependentUpon>
+    </Content>
     <Content Include="UP.aspx" />
     <Content Include="ADT.aspx" />
     <Content Include="Content\bootstrap.css" />
@@ -236,9 +240,7 @@
       <DependentUpon>ViewSwitcher.ascx</DependentUpon>
     </Compile>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="App_Data\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <None Include="packages.config" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
