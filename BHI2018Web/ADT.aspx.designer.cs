@@ -130,13 +130,13 @@ namespace BHI2018Web {
         protected global::System.Web.UI.WebControls.GridView gvEP;
         
         /// <summary>
-        /// Elements control.
+        /// RetrieveElements control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.SqlDataSource Elements;
+        protected global::System.Web.UI.WebControls.SqlDataSource RetrieveElements;
         
         /// <summary>
         /// gvFS control.
@@ -148,12 +148,12 @@ namespace BHI2018Web {
         protected global::System.Web.UI.WebControls.GridView gvFS;
         
         /// <summary>
-        /// FoundationSkills control.
+        /// Retrieve control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.SqlDataSource FoundationSkills;
+        protected global::System.Web.UI.WebControls.SqlDataSource Retrieve;
     }
 }

@@ -43,27 +43,33 @@
     <div class="row">
     <div class="col-md-4">
         <p>Elements and Performance Criteria:</p>
-        <asp:GridView ID="gvEP" runat="server" AutoGenerateColumns="False" DataKeyNames="Element ID" DataSourceID="Elements">
+        <asp:GridView ID="gvEP" runat="server" AutoGenerateColumns="False" DataKeyNames="Element ID" DataSourceID="RetrieveElements">
             <Columns>
                 <asp:BoundField DataField="Element ID" HeaderText="Element ID" InsertVisible="False" ReadOnly="True" SortExpression="Element ID" />
                 <asp:BoundField DataField="Name" HeaderText="Name" SortExpression="Name" />
-                <asp:BoundField DataField="Unit_Unit Code" HeaderText="Unit_Unit Code" SortExpression="Unit_Unit Code" />
+                <asp:BoundField DataField="Description" HeaderText="Description" SortExpression="Description" />
             </Columns>
         </asp:GridView>
-        <asp:SqlDataSource ID="Elements" runat="server" ConnectionString="<%$ ConnectionStrings:ConnectionString %>" SelectCommand="SELECT * FROM [Elements]"></asp:SqlDataSource>
+        <asp:SqlDataSource ID="RetrieveElements" runat="server" ConnectionString="<%$ ConnectionStrings:ConnectionString %>" SelectCommand="Load Elements and PerformanceCriteria for ADT" SelectCommandType="StoredProcedure">
+            <SelectParameters>
+                <asp:ControlParameter ControlID="txbUnitCode" DefaultValue="" Name="UnitCode" PropertyName="Text" Type="String" />
+            </SelectParameters>
+        </asp:SqlDataSource>
     </div>
     <div class="col-md-4">
         <p>Foundation Skills:</p>
-        <asp:GridView ID="gvFS" runat="server" AutoGenerateColumns="False" DataKeyNames="Foundation Skill ID" DataSourceID="FoundationSkills">
+        <asp:GridView ID="gvFS" runat="server" AutoGenerateColumns="False" DataSourceID="Retrieve">
             <Columns>
-                <asp:BoundField DataField="Foundation Skill ID" HeaderText="Foundation Skill ID" InsertVisible="False" ReadOnly="True" SortExpression="Foundation Skill ID" />
                 <asp:BoundField DataField="Name" HeaderText="Name" SortExpression="Name" />
                 <asp:BoundField DataField="Performance Criterias" HeaderText="Performance Criterias" SortExpression="Performance Criterias" />
                 <asp:BoundField DataField="Description" HeaderText="Description" SortExpression="Description" />
-                <asp:BoundField DataField="Unit_Unit Code" HeaderText="Unit_Unit Code" SortExpression="Unit_Unit Code" />
             </Columns>
         </asp:GridView>
-        <asp:SqlDataSource ID="FoundationSkills" runat="server" ConnectionString="<%$ ConnectionStrings:ConnectionString %>" SelectCommand="SELECT * FROM [Foundation Skills]"></asp:SqlDataSource>
+        <asp:SqlDataSource ID="Retrieve" runat="server" ConnectionString="<%$ ConnectionStrings:ConnectionString %>" SelectCommand="Load FoundationSkills for ADT" SelectCommandType="StoredProcedure">
+            <SelectParameters>
+                <asp:ControlParameter ControlID="txbUnitCode" Name="UnitCode" PropertyName="Text" Type="String" />
+            </SelectParameters>
+        </asp:SqlDataSource>
     </div>
         
   </div>

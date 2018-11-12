@@ -1,9 +1,12 @@
 ﻿using HtmlAgilityPack;
+using Microsoft.Office.Interop.Word;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Data;
 using System.Data.SqlClient;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
@@ -11,7 +14,7 @@ using System.Web.UI.WebControls;
 
 namespace BHI2018Web
 {
-    public partial class Contact : Page
+    public partial class Contact : System.Web.UI.Page
     {
         //Connection String
         String connectionString = ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString;
@@ -52,7 +55,7 @@ namespace BHI2018Web
                     //do not add the empty rows into ListBox
                     if (!String.IsNullOrWhiteSpace(item))
                     {
-                        lsbApp.Items.Add(item);
+                        //lsbApp.Items.Add(item);
                         application += item + Environment.NewLine + Environment.NewLine;
                     }
                 }
@@ -92,7 +95,7 @@ namespace BHI2018Web
                 var ass = doc.DocumentNode.SelectNodes("//h2[text()='Assessment Conditions']/following-sibling::*/li").ToList(); //some units do not have Link section, so get any li nodes after Assessment Conditions section instead
                 foreach (var items in ass)
                 {
-                    lsbAC.Items.Add(items.InnerText);
+                    //lsbAC.Items.Add(items.InnerText);
                     assessmentConditions += items.InnerText + Environment.NewLine + Environment.NewLine;
                 }
             }
@@ -215,7 +218,7 @@ namespace BHI2018Web
                 var pe = doc.DocumentNode.SelectNodes("//h2[text()='Performance Evidence']/following-sibling::*/li [count(.|//h2[text()='Knowledge Evidence']/preceding-sibling::*/li) = count(//h2[text()='Knowledge Evidence']/preceding-sibling::*/li) ]").ToList();
                 foreach (var items in pe)
                 {
-                    lsbPE.Items.Add(items.InnerText);
+                    //lsbPE.Items.Add(items.InnerText);
                     performanceEvidence.Add(items.InnerText);
                 }
             }
@@ -233,7 +236,7 @@ namespace BHI2018Web
                 var kn = doc.DocumentNode.SelectNodes("//h2[text()='Knowledge Evidence']/following-sibling::*/li [count(.|//h2[text()='Assessment Conditions']/preceding-sibling::*/li) = count(//h2[text()='Assessment Conditions']/preceding-sibling::*/li) ]").ToList();
                 foreach (var items in kn)
                 {
-                    lsbKE.Items.Add(items.InnerText);
+                    //lsbKE.Items.Add(items.InnerText);
                     knowlegeEvidence.Add(items.InnerText);
                 }
             }
@@ -358,14 +361,239 @@ namespace BHI2018Web
 
         protected void btnCreateADT_Click(object sender, EventArgs e)
         {
+            //object objMissing = System.Reflection.Missing.Value;
+            String path = Environment.CurrentDirectory;
+            path = "E:\\ADT.doc";
+            Microsoft.Office.Interop.Word.Application wordApp = new Microsoft.Office.Interop.Word.Application();
+            wordApp.Visible = false;
+            Document document = wordApp.Documents.Open(path);
+            try
+            {
+                if (document == null)
+                {
+                    try
+                    {
+                        wordApp.Quit();
+                        wordApp = null;
+                    }
+                    catch {
+                        lblMessageDisplay.Text = "wordApp did not quit.";
+                    }
+
+                    return;
+                }
+
+                // get table of key:value codes for cell data
+
+
+                // get tables references
+                foreach (Microsoft.Office.Interop.Word.Table table in document.Tables)
+                {
+                    for (int x = 0; x < table.Columns.Count; x++)
+                    {
+                        // here we check against predefined cell codes, to find out which data is expected in which column of each table
+
+                    }
+                }
+
+                // get Unit Data
+                String SQL;
+                SqlCommand cmd;
+                using (SqlConnection myConn = new SqlConnection(connectionString))
+                {
+                    myConn.Open();
+
+                    // add Unit Code, Unit Title, Application, Assessment Conditions                
+                    //add unit code and name
+                    Microsoft.Office.Interop.Word.Table unitCode = document.Tables[2];
+                    // add Application
+                    Microsoft.Office.Interop.Word.Table applicationTable = document.Tables[1];
+                    //add Assessment Conditions
+                    Microsoft.Office.Interop.Word.Table TableAC = document.Tables[7];
+
+                    SQL = "EXEC [dbo].[Load Unit for ADT] @UC";
+                    cmd = new SqlCommand(SQL, myConn);
+
+                    cmd.Parameters.AddWithValue("@UC", txbUnitCode.Text);
+
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+
+                            // unit code and name
+                            unitCode.Rows.Add();
+                            unitCode.Cell(2, 1).Range.Text = reader[0].ToString();
+                            unitCode.Cell(2, 2).Range.Text = reader[1].ToString();
+                            unitCode.Rows[2].Cells.Shading.BackgroundPatternColor = WdColor.wdColorWhite;
+                            unitCode.Rows[2].Range.Font.Bold = 0;
+                            
+
+                            // application
+                            applicationTable.Cell(1, 2).Range.Text = reader[2].ToString();
+                            applicationTable.Cell(1, 2).Range.Font.Color = WdColor.wdColorBlack;
+                            applicationTable.Cell(1, 2).Range.ListFormat.ApplyBulletDefault(Type.Missing);
+
+
+                            // assessment conditions
+                            TableAC.Cell(1, 2).Range.Text = reader[3].ToString();
+
+                            //display in the web page
+                            lblUnitNameDisplay.Text = reader[1].ToString();
+                            lsbApp.Items.Add(reader[2].ToString());
+                            lsbAC.Items.Add(reader[3].ToString());
+
+                        }
+                    }
+
+                    //add ELEMENT and PERFORMANCE CRITERIA
+                    Microsoft.Office.Interop.Word.Table tableEP = document.Tables[3];
+
+                    SQL = "EXEC [dbo].[Load Elements and PerformanceCriteria for ADT] @UC";
+                    cmd.CommandText = SQL;
+
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        Row newRow = null;
+                        int oldEleID = -1;
+                        int readCount = 1;
+                        int mergeLoc = 2;
+                        string element = null;
+
+                        while (reader.Read())
+                        {
+                            readCount++;
+
+                            // adds a new row, and formats it
+                            newRow = tableEP.Rows.Add();
+
+                            // add performance criteria
+                            tableEP.Cell(readCount, 2).Range.Text = reader[2].ToString();
+
+                            // add elements     
+                            element = reader[1].ToString();
+
+                            if (oldEleID > -1)
+                            {
+                                if ((int)reader[0] == oldEleID)
+                                {
+                                    // merge
+                                    tableEP.Cell(mergeLoc, 1).Merge(tableEP.Cell(readCount, 1));
+                                }
+                                else
+                                {
+                                    // input text
+                                    tableEP.Cell(mergeLoc, 1).Range.Text = element;
+                                    mergeLoc = readCount;
+                                    element = null;
+                                }
+                            }
+                            else
+                            {
+                                newRow.Cells.Shading.BackgroundPatternColor = WdColor.wdColorWhite;
+                                newRow.Range.Font.Bold = 0;
+                            }
+
+                            oldEleID = (int)reader[0];
+                        }
+
+                        if (!String.IsNullOrWhiteSpace(element))
+                        {
+                            tableEP.Cell(mergeLoc, 1).Range.Text = element;
+                        }
+
+                    }
+
+                    //add Foundation Skills
+                    Microsoft.Office.Interop.Word.Table tableFS = document.Tables[4];
+
+                    SQL = "EXEC [dbo].[Load FoundationSkills for ADT] @UC";
+                    cmd.CommandText = SQL;
+
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        Row newRow;
+                        while (reader.Read())
+                        {
+                            newRow = tableFS.Rows.Add();                            
+                            newRow.Range.Font.Bold = 0;
+                            for (int i = 0; i < 3; i++)
+                            {
+                                newRow.Cells[i + 1].Range.Text = reader[i].ToString();
+                            }
+                        }
+                        for (int i = 0; i < tableFS.Rows.Count; i++)
+                        { tableFS.Cell(i + 3, 3).Range.ListFormat.ApplyBulletDefault(Type.Missing); }
+                    }
+
+                    //add Performance Evidence
+                    Microsoft.Office.Interop.Word.Table tablePE = document.Tables[5];
+                    //add Knowledge Evidence
+                    Microsoft.Office.Interop.Word.Table tableKE = document.Tables[6];
+
+                    SQL = "EXEC [dbo].[Load EvidenceIndicators for ADT] @UC";
+                    cmd.CommandText = SQL;
+
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        Row newRow;
+                        while (reader.Read())
+                        {
+                            // if knowlege evidence flag is true
+                            if ((bool)reader[0])
+                            {
+                                newRow = tableKE.Rows.Add();
+                                lsbKE.Items.Add(reader[1].ToString()); // display in web page
+                            }
+                            else
+                            {
+                                newRow = tablePE.Rows.Add();
+                                lsbPE.Items.Add(reader[1].ToString()); // display in web page
+                            }
+
+                            newRow.Cells.Shading.BackgroundPatternColor = WdColor.wdColorWhite;
+                            newRow.Range.Font.Bold = 0;
+
+                            newRow.Cells[1].Range.Text = reader[1].ToString();
+                        }
+                    }
+                    //close the connection
+                    myConn.Close();
+                }
+
+                //Save file
+                // will need to include option to specify file location and filename
+                // will also need to check if file already exists, and prompt before overwriting
+                object filename = "E:\\ADT1.doc";
+                document.SaveAs2(ref filename);
+
+                // modified the feedback message to tell you where it actually saved
+                // seriously, how long do you think it took me to find where it was saving to, Man?
+                lblMessageDisplay.Text = "Saved to: " + Environment.NewLine + filename;
+            }
+            catch (Exception ex)
+            {
+                lblMessageDisplay.Text = ex.Message + Environment.NewLine + Environment.NewLine + ex.TargetSite.ToString();
+            }
+            finally
+            {
+                try
+                {
+                    document.Close(false);
+                    document = null;
+                    wordApp.Quit();
+                    wordApp = null;
+                }
+                catch { }
+            }
 
         }
 
         protected void btnSave_Click(object sender, EventArgs e)
         {
             //Create data storage variables
-            String application, assessmentConditions;
-            String[] unitDetail;
+            String application = null, assessmentConditions =null;
+            String[] unitDetails = null;
             ArrayList elements = new ArrayList(), performanceCriteria = new ArrayList(), performanceEvidence = new ArrayList(), knowlegeEvidence = new ArrayList();
             ArrayList[] foundationSkills = new ArrayList[3];
             //Initialize foundationSkills
@@ -382,8 +610,8 @@ namespace BHI2018Web
             //check if the unitcode exists
             if (doc.DocumentNode.SelectSingleNode("//h1[text()='Unit of competency details']") != null)
             {
-                unitDetail = getUnitCodeAndTitle(doc);
-                lblUnitNameDisplay.Text = unitDetail[1].Trim();
+                unitDetails = getUnitCodeAndTitle(doc);
+                lblUnitNameDisplay.Text = unitDetails[1].Trim();
             }
             else
             {
@@ -412,6 +640,104 @@ namespace BHI2018Web
                 getKnowlegeEvidence(doc, ref knowlegeEvidence);
             }
             catch (Exception ex) { lblMessageDisplay.Text = ex.ToString(); ; }
+
+            // SQL Insert Transaction starts from here
+            String SQL = null;
+            SqlCommand cmd = null;
+            using (SqlConnection myConn = new SqlConnection(connectionString))
+            {
+                
+                try
+                {
+                    myConn.Open();
+
+                        SQL = "BEGIN TRAN";
+                        cmd = new SqlCommand(SQL, myConn);
+                        cmd.ExecuteNonQuery();
+
+                        // populates Unit table into the database
+                        cmd = populateUnitTable(myConn, unitDetails, application, assessmentConditions);
+                        cmd.ExecuteNonQuery();
+
+                        // counts the elements we're up to
+                        int i = 1;
+
+                        // populates elements and perf criteria into the database
+                        foreach (String element in elements)
+                        {
+                            cmd = populateElements(myConn, unitDetails[0], element);
+
+                            // ExecuteScalar() is the same as ExecuteNonQuery(), except it can be used to return the Primary Key index that was just created
+                            Int32 eleIndex = (Int32)cmd.ExecuteScalar();
+
+                            //lblMessageDisplay.Text = "eleIndex: " + eleIndex;
+
+                            foreach (String perfCriteria in performanceCriteria)
+                            {
+                                if (perfCriteria.StartsWith(i + "."))
+                                {
+                                    cmd = populatePerformanceCriteria(myConn, eleIndex, perfCriteria);
+                                    cmd.ExecuteNonQuery();
+                                }
+                            }
+                            i++;
+                        }
+
+                        // populates foundation skills into the database
+                        for (int x = 0; x < foundationSkills[0].Count; x++)
+                        {
+                            cmd = populateFoundationSkills(myConn, unitDetails[0],
+                                foundationSkills[0][x].ToString(),
+                                foundationSkills[1][x].ToString(),
+                                foundationSkills[2][x].ToString());
+                            cmd.ExecuteNonQuery();
+                        }
+
+                        // populate performance and knowlege evidence
+                        foreach (String perfEv in performanceEvidence)
+                        {
+                            cmd = populatePerformance_KnowlegeEvidence(myConn, unitDetails[0], perfEv, false);
+                            cmd.ExecuteNonQuery();
+                        }
+                        foreach (String knowEv in knowlegeEvidence)
+                        {
+                            cmd = populatePerformance_KnowlegeEvidence(myConn, unitDetails[0], knowEv, true);
+                            cmd.ExecuteNonQuery();
+                        }
+
+                        SQL = "COMMIT TRAN";
+                        cmd = new SqlCommand(SQL, myConn);
+                        cmd.ExecuteNonQuery();
+                    
+                }
+                catch (Exception ex)
+                {
+                    try
+                    {
+                        lblMessageDisplay.Text = cmd.CommandText + Environment.NewLine + ex.Message;
+
+                        SQL = "ROLLBACK TRAN";
+                        cmd = new SqlCommand(SQL, myConn);
+                        cmd.ExecuteNonQuery();
+                    }
+                    catch (Exception exx)
+                    {
+                        try
+                        {
+                            lblMessageDisplay.Text = "Rollback failed too, :(" + Environment.NewLine + cmd.CommandText + Environment.NewLine + exx.Message;
+                        }
+                        catch { }
+                    }
+                }
+                finally
+                {
+                    if (myConn.State == ConnectionState.Open)
+                    {
+                        myConn.Close();
+                    }
+                    myConn.Dispose();
+                }
+            }
         }
     }
 }
