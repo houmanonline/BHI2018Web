@@ -28,6 +28,11 @@ namespace BHI2018Web
                 var unitCodeName = doc.DocumentNode.SelectSingleNode("//h1[text()='Unit of competency details']/following::*[1]");
                 String unitTitle = unitCodeName.InnerText;
                 String[] ucn = unitTitle.Split('-');
+                Int32 count = ucn.Count();
+                for (int i = 1; i < count; i++)
+                {
+                    ucn[1] = ucn[1] + ucn[i];
+                }
                 //lblUnitCode.Text = ucn[0].Trim();
                 //lblUnitName.Text = ucn[1].Trim();
                 return ucn;
@@ -569,7 +574,7 @@ namespace BHI2018Web
 
                 // modified the feedback message to tell you where it actually saved
                 // seriously, how long do you think it took me to find where it was saving to, Man?
-                lblMessageDisplay.Text = "Saved to: " + Environment.NewLine + filename;
+                lblMessageDisplay.Text = "File Generated on server, click download button to download on your PC.";
             }
             catch (Exception ex)
             {
@@ -586,7 +591,6 @@ namespace BHI2018Web
                 }
                 catch { }
             }
-
         }
 
         protected void btnSave_Click(object sender, EventArgs e)
@@ -738,6 +742,15 @@ namespace BHI2018Web
                     myConn.Dispose();
                 }
             }
+        }
+
+        protected void btnDownLoad_Click(object sender, EventArgs e)
+        {
+            //Once user click on Generate button, download the doc.
+            Response.ContentType = "Application/doc";
+            Response.AppendHeader("Content-Disposition", "attachment; filename=ADT1.doc");
+            Response.TransmitFile("E:\\ADT1.doc");
+            Response.End();
         }
     }
 }

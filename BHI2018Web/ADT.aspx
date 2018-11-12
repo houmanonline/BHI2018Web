@@ -20,6 +20,7 @@
         </div>
         <div class="col-md-4">
             <asp:Button ID="btnCreateADT" runat="server" Text="Create ADT" OnClick="btnCreateADT_Click" />
+            <asp:Button ID="btnDownLoad" runat="server" Text="Download" OnClick="btnDownLoad_Click" />
         </div>
     </div>
     <div class="row">
