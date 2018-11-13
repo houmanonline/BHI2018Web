@@ -1,10 +1,140 @@
 ﻿<%@ Page Title="About" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="UP.aspx.cs" Inherits="BHI2018Web.About" %>
-
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
-
-    <div class="jumbotron">
+<link href="content/UnitPlan.css" rel="stylesheet">
+<div class="jumbotron">
   <h1 class="display-4">Create an Unit Plan</h1>
   <p class="lead">Fill all the text fields too create a unit plan.</p>
   <hr class="my-4">
 </div>
+<div class="Studentinformation">
+    <h2>Unit Plan Part 1 Student information</h2>
+    <h3>Information about your Unit</h3>
+    <table class="table">
+        <tr>
+            <td>Your Qualification: Code and Title</td>
+            <td><asp:TextBox ID="txbCourseCodeTitle" Cssclass ="Textboxes1" runat="server"></asp:TextBox></td>            
+        </tr>
+        <tr>
+            <td>Your Unit/s : Code and Title</td>
+            <td><asp:TextBox ID="txbUnitCodeTitle" Cssclass ="Textboxes1" runat="server"></asp:TextBox></td>            
+        </tr>
+        <tr>
+            <td>Topics you will be learning</td>
+            <td><asp:TextBox ID="TextBox3" Cssclass ="Textboxes1" runat="server"></asp:TextBox></td>            
+        </tr>
+        <tr>
+            <td>What do you need to bring to class?</td>
+            <td><asp:TextBox ID="TextBox4" Cssclass ="Textboxes1" runat="server"></asp:TextBox></td>            
+        </tr>
+        <tr>
+            <td>Date your unit/s starts</td>
+            <td><asp:TextBox ID="TextBox5" Cssclass ="Textboxes1" runat="server"></asp:TextBox></td>
+        </tr>
+        <tr>
+            <td>Date your unit/s finishes</td>
+            <td><asp:TextBox ID="TextBox1" Cssclass ="Textboxes1" runat="server"></asp:TextBox></td>
+        </tr>
+        <tr>
+            <td>Class dates and times for this unit/s</td>
+            <td><asp:TextBox ID="TextBox6" Cssclass ="Textboxes1" runat="server"></asp:TextBox></td>            
+        </tr>
+        <tr>
+            <td>Building and Room for your unit/s</td>
+            <td><asp:TextBox ID="TextBox7" Cssclass ="Textboxes1" runat="server"></asp:TextBox></td>            
+        </tr>
+    </table>
+</div>
+      <hr class="my-4">
+<div class="LearningHours">
+    <table class="table">
+        <tr>
+            <td><b>Your Learning Program</b></td>
+            <td><b>Hours</b></td>
+        </tr>
+        <tr>
+            <td>Timetabled classes/tutorials with a teacher</td>
+            <td><asp:TextBox ID="TextBox2" Cssclass ="Textboxes2" runat="server"></asp:TextBox></td> 
+        </tr>
+        <tr>
+            <td>Timetabled in class or timetabled workplace based assessment</td>
+            <td><asp:TextBox ID="TextBox8" Cssclass ="Textboxes2" runat="server"></asp:TextBox></td>
+        </tr>
+        <tr>
+            <td>Timetabled online student support</td>
+            <td><asp:TextBox ID="TextBox9" Cssclass ="Textboxes2" runat="server"></asp:TextBox></td>
+        </tr>
+        <tr>
+            <td>Practical placement/Practicum/Workplace based training</td>
+            <td><asp:TextBox ID="TextBox10" Cssclass ="Textboxes2" runat="server"></asp:TextBox></td>
+        </tr>
+        <tr>
+            <td>Self Directed learning and assessment</td>
+            <td><asp:TextBox ID="TextBox11" Cssclass ="Textboxes2" runat="server"></asp:TextBox></td>
+        </tr>
+        </table>
+    </div>
+    <hr class="my-4">
+    <div class="AssessmentTasks">
+        <h3>Your Assessment Tasks</h3>
+        <asp:GridView ID="gvAssessmentTask" runat="server" ShowFooter="True" AutoGenerateColumns="False"
+                CellPadding="4" ForeColor="#333333" GridLines="None" OnRowDeleting="grvAssessmentTask_RowDeleting"
+                 Width="97%" Height="16px" Style="text-align: left" >
+                <Columns>
+                    <asp:BoundField DataField="RowNumber" HeaderText="Task NO." />
+                    <asp:TemplateField HeaderText="Assessment Task">
+                        <ItemTemplate>
+                            <asp:TextBox ID="txbAT" runat="server" Height="55px" TextMode="MultiLine" Width="200px"></asp:TextBox>
+                            <asp:RequiredFieldValidator ID="RequiredFieldValidator1" runat="server" ControlToValidate="txbAT"
+                                ErrorMessage="*" SetFocusOnError="True"></asp:RequiredFieldValidator>
+                        </ItemTemplate>
+                    </asp:TemplateField>
+                    <asp:TemplateField HeaderText="Due Date for Assessment">
+                        <ItemTemplate>
+                            <asp:TextBox ID="txbDueDate" runat="server" MaxLength="12" Width="100px"></asp:TextBox>
+                            <asp:RequiredFieldValidator ID="RequiredFieldValidator2" runat="server" ControlToValidate="txbDueDate"
+                                ErrorMessage="*" SetFocusOnError="True"></asp:RequiredFieldValidator>
+                        </ItemTemplate>
+                    </asp:TemplateField>
+                    <asp:TemplateField HeaderText="Unit/s that relate to this assessment">
+                        <ItemTemplate>
+                            <asp:TextBox ID="txbUnitRelate" runat="server" Height="55px" TextMode="MultiLine" Width="200px"></asp:TextBox>
+                            <asp:RequiredFieldValidator ID="RequiredFieldValidator3" runat="server" ControlToValidate="txbUnitRelate"
+                                ErrorMessage="*" SetFocusOnError="True"></asp:RequiredFieldValidator>
+                        </ItemTemplate>
+                        <FooterStyle HorizontalAlign="Right" />
+                        <FooterTemplate>
+                            <asp:Button ID="ButtonAdd" runat="server" Text="Add New Row" OnClick="ButtonAdd_Click" />
+                        </FooterTemplate>
+                    </asp:TemplateField>                       
+                    <asp:CommandField ShowDeleteButton="True" />
+                </Columns>
+                <FooterStyle BackColor="#c8e011" Font-Bold="True" ForeColor="White" />
+                <RowStyle BackColor="#EFF3FB" />
+                <EditRowStyle BackColor="#2461BF" />
+                <SelectedRowStyle BackColor="#D1DDF1" Font-Bold="True" ForeColor="#333333" />
+                <PagerStyle BackColor="#2461BF" ForeColor="White" HorizontalAlign="Center" />
+                <HeaderStyle BackColor="#c8e011" Font-Bold="True" ForeColor="Black" />
+                <AlternatingRowStyle BackColor="White" />
+            </asp:GridView>
+        </div>
+        <hr class="my-4">
+        <div class="TeacherInformation">
+        <h3>Your Teacher Contact Details</h3>
+            <table class="table">
+        <tr>
+            <td><b>Teacher Name</b></td>
+            <td><b>Email Contact</b></td>
+            <td><b>Telephone</b></td>
+            <td><b>Availability</b></td>
+        </tr>
+        <tr>
+            <td><asp:TextBox ID="txbTeacherName" runat="server" ></asp:TextBox></td>
+            <td><asp:TextBox ID="txbEmail" runat="server" ></asp:TextBox></td>
+            <td><asp:TextBox ID="txbTel" runat="server" ></asp:TextBox></td>
+            <td><asp:TextBox ID="txbAvailability" runat="server" textMode="MultiLine"></asp:TextBox></td>
+        </tr>
+         </table>
+        </div>
+            <hr class="my-4">
+
 </asp:Content>
