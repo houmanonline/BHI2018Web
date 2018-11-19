@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Contact" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="ADT.aspx.cs" Inherits="BHI2018Web.Contact" %>
+﻿<%@ Page Title="ADT" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="ADT.aspx.cs" Inherits="BHI2018Web.Contact" %>
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
     <div class="jumbotron">

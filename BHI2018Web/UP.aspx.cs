@@ -265,7 +265,6 @@ namespace BHI2018Web
                 }
             }
         }
-
         private void SetRowDataAT()
         {
             int rowIndex = 0;
@@ -300,7 +299,6 @@ namespace BHI2018Web
             }
             //SetPreviousData();
         }
-
         private void SetRowDataUP()
         {
             int UProwIndex = 0;
@@ -351,6 +349,156 @@ namespace BHI2018Web
         protected void gvAssessmentTask_SelectedIndexChanged(object sender, EventArgs e)
         {
 
+        }
+        //Generate 
+        protected void btnCreateUP_Click(object sender, EventArgs e)
+        {
+            //object objMissing = System.Reflection.Missing.Value;
+            String path = Environment.CurrentDirectory;
+            //the code above may cause some problem because when you run the application, current directory is in C drive, it might be read only.
+            //In web application, put the template in other drive to make sure it can be filled with data.
+            path = "E:\\UP.docx";
+            Microsoft.Office.Interop.Word.Application wordApp = new Microsoft.Office.Interop.Word.Application();
+            wordApp.Visible = false;
+            Microsoft.Office.Interop.Word.Document document = wordApp.Documents.Open(path);
+            try { 
+                if (document == null)
+                {
+                        try
+                        {
+                            wordApp.Quit();
+                            wordApp = null;
+                        }
+                        catch
+                        {
+                            lblMessageDisplay.Text = "wordApp did not quit.";
+                        }
+
+                        return;
+                }
+                //fill Informaiton About Your Unit
+                Microsoft.Office.Interop.Word.Table informationAboutYourUnit = document.Tables[1];
+                String yourQualification = txbCourseCodeTitle.Text;
+                String yourUnits = txbUnitCodeTitle.Text;
+                //separator topic by lines
+                String topic = txbTopics.Text;
+                String[] topicSeparators = new String[] { "\r\n" };
+                String[] topicArray = topic.Split(topicSeparators, StringSplitOptions.None);
+
+                String whatAreYouBingToClass = txbBring.Text;
+                String DateStart = txbStart.Text;
+                String DateEnd = txbFinish.Text;
+                String classDateAndTime = txbDateTime.Text;
+                String building = txbClassroom.Text;
+                String learningProgram1 = txbLearningProgram1.Text;
+                String learningProgram2 = txbLearningProgram2.Text;
+                String learningProgram3 = txbLearningProgram3.Text;
+                String learningProgram4 = txbLearningProgram4.Text;
+                String learningProgram5 = txbLearningProgram5.Text;
+
+                informationAboutYourUnit.Cell(3,2).Range.Text = yourQualification;
+                informationAboutYourUnit.Cell(4, 2).Range.Text = yourUnits;
+                //display topics in the cell
+                String topics = null;
+                foreach (string s in topicArray)
+                {
+                    topics = topics + s + Environment.NewLine;
+                }
+                informationAboutYourUnit.Cell(5, 2).Range.Text = topics;
+                informationAboutYourUnit.Cell(6, 2).Range.Text = whatAreYouBingToClass;
+                informationAboutYourUnit.Cell(7, 2).Range.Text = DateStart;
+                informationAboutYourUnit.Cell(7, 4).Range.Text = DateEnd;
+                informationAboutYourUnit.Cell(8, 2).Range.Text = classDateAndTime;
+                informationAboutYourUnit.Cell(9, 2).Range.Text = building;
+                informationAboutYourUnit.Cell(11, 2).Range.Text = learningProgram1;
+                informationAboutYourUnit.Cell(12, 2).Range.Text = learningProgram2;
+                informationAboutYourUnit.Cell(13, 2).Range.Text = learningProgram3;
+                informationAboutYourUnit.Cell(14, 2).Range.Text = learningProgram4;
+                informationAboutYourUnit.Cell(15, 2).Range.Text = learningProgram5;
+
+                //fill teacher information
+                Microsoft.Office.Interop.Word.Table teacherInformation = document.Tables[3];
+                String teacherName = txbTeacherName.Text;
+                String teacherEmail = txbEmail.Text;
+                String teacherTel = txbTel.Text;
+                //separator teacherAvailability by lines
+                String teacherAvailability = txbAvailability.Text;
+                String[] availabilitySeparators = new String[] { "\r\n" };
+                String[] teacherAvailabilityArray = teacherAvailability.Split(availabilitySeparators, StringSplitOptions.None);
+                teacherInformation.Cell(3, 1).Range.Text = teacherName;
+                teacherInformation.Cell(3, 2).Range.Text = teacherEmail;
+                teacherInformation.Cell(3, 3).Range.Text = teacherTel;
+                //display teacherAvailability in the cell
+                String teacherAvailabilities = null;
+                foreach (string s in topicArray)
+                {
+                    teacherAvailabilities = teacherAvailabilities + s + Environment.NewLine;
+                }
+                teacherInformation.Cell(3, 4).Range.Text = teacherAvailabilities;
+
+                //fill Your Assessment Tasks
+                Microsoft.Office.Interop.Word.Table yourAssessmentTasks = document.Tables[2];
+                //the filled text stored in the ViewState, assign it to a DataTable
+                DataTable filledAssessmentTaskTable = (DataTable)ViewState["ATTable"];
+                Int32 assessmentTaskTableRowCount = filledAssessmentTaskTable.Rows.Count;
+                //add rows. when generate UP, the table need to add additional empty row, otherwise the data in the last row will loss. That is why "rowCount - 2"
+                for (int i = 0; i < assessmentTaskTableRowCount - 2; i++)
+                { yourAssessmentTasks.Rows.Add(); }
+                //fill data
+                for (int row = 0; row < assessmentTaskTableRowCount - 1; row++)
+                {
+                    for (int column = 0; column < 3; column++)
+                    {
+                        yourAssessmentTasks.Cell(row + 3, column + 2).Range.Text = filledAssessmentTaskTable.Rows[row][column + 1].ToString();
+                    }
+                }
+
+                //fill Teacher Information
+                Microsoft.Office.Interop.Word.Table unitPlanPart2 = document.Tables[6];
+                //the filled text stored in the ViewState, assign it to a DataTable
+                DataTable filledUnitPlanPart2Table = (DataTable)ViewState["UPTable"];
+                Int32 unitPlanPart2TableRowCount = filledUnitPlanPart2Table.Rows.Count;
+                for (int i = 0; i < unitPlanPart2TableRowCount -2; i++)
+                { unitPlanPart2.Rows.Add(); }
+                //fill data
+                for (int row = 0; row < unitPlanPart2TableRowCount - 1; row++)
+                {
+                    for (int column = 0; column < 6; column++)
+                    {
+                        unitPlanPart2.Cell(row + 3, column + 2).Range.Text = filledUnitPlanPart2Table.Rows[row][column + 1].ToString();
+                    }
+                }
+
+                //Save file
+                //the web application is running on the server, this is the path on the server side, not user side.
+                object filename = "E:\\UP1.docx";
+                document.SaveAs2(ref filename);
+                lblMessageDisplay.Text = "File Generated on server, click download button to download on your PC.";
+            }
+            catch (Exception ex)
+            {
+                lblMessageDisplay.Text = ex.Message + Environment.NewLine + Environment.NewLine + ex.TargetSite.ToString();
+            }
+            finally
+            {
+                try
+                {
+                    document.Close(false);
+                    document = null;
+                    wordApp.Quit();
+                    wordApp = null;
+                }
+                catch { }
+            }
+        }
+
+        protected void btnDownLoad_Click(object sender, EventArgs e)
+        {
+            //Once user click on Generate button, download the document.
+            Response.ContentType = "Application/docx";
+            Response.AppendHeader("Content-Disposition", "attachment; filename=UP1.docx");
+            Response.TransmitFile("E:\\UP1.docx");
+            Response.End();
         }
     }
 }

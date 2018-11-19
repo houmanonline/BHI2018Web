@@ -1,4 +1,4 @@
-﻿<%@ Page Title="About" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="UP.aspx.cs" Inherits="BHI2018Web.About" %>
+﻿<%@ Page Title="Unit Plan" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="UP.aspx.cs" Inherits="BHI2018Web.About" %>
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
 <link href="content/UnitPlan.css" rel="stylesheet">
 <div class="jumbotron">
@@ -20,7 +20,7 @@
         </tr>
         <tr>
             <td>Topics you will be learning</td>
-            <td><asp:TextBox ID="txbTopics" Cssclass ="Textboxes1" runat="server"></asp:TextBox></td>            
+            <td><asp:TextBox ID="txbTopics" Cssclass ="Textboxes1" runat="server" TextMode="MultiLine" Height="60px"></asp:TextBox></td>            
         </tr>
         <tr>
             <td>What do you need to bring to class?</td>
@@ -75,7 +75,7 @@
     </div>
     <hr class="my-4">
     <div class="AssessmentTasks">
-        <h3>Your Assessment Tasks</h3>
+        <h3>Your Assessment Tasks</h3> <strong>Add an additional empty row when you finish the table. Otherwise, the data in the last row will lose.</strong>
         <asp:GridView ID="gvAssessmentTask" runat="server" ShowFooter="True" AutoGenerateColumns="False"
                 CellPadding="4" ForeColor="#333333" GridLines="None" OnRowDeleting="grvAssessmentTask_RowDeleting"
                  Width="97%" Height="16px" Style="text-align: left" OnSelectedIndexChanged="gvAssessmentTask_SelectedIndexChanged" >
@@ -128,13 +128,13 @@
             <td><asp:TextBox ID="txbTeacherName" runat="server" ></asp:TextBox></td>
             <td><asp:TextBox ID="txbEmail" runat="server" ></asp:TextBox></td>
             <td><asp:TextBox ID="txbTel" runat="server" ></asp:TextBox></td>
-            <td><asp:TextBox ID="txbAvailability" runat="server" textMode="MultiLine"></asp:TextBox></td>
+            <td><asp:TextBox ID="txbAvailability" runat="server" textMode="MultiLine" Height="60px" Width="200px"></asp:TextBox></td>
         </tr>
          </table>
         </div>
             <hr class="my-4">
     <div class="UnitPlan">
-        <h3>Unit Plan Part 2 - Teacher Information </h3>
+        <h3>Unit Plan Part 2 - Teacher Information </h3><strong>Add an additional empty row when you finish the table. Otherwise, the data in the last row will lose.</strong>
         <asp:GridView ID="gvUnitPlan" runat="server" ShowFooter="True" AutoGenerateColumns="False"
                 CellPadding="4" ForeColor="#333333" GridLines="None" OnRowDeleting="grvUnitPlan_RowDeleting"
                  Width="97%" Height="16px" Style="text-align: left" >
@@ -203,8 +203,8 @@
         <div class="col-md-4">
             <asp:Button ID="btnSave" runat="server" Text="Store in Database" Width="200px"  /><p></p>
             <asp:Button ID="btnLoad" runat="server" Text="Load from Database" Width="200px" /><p></p>
-            <asp:Button ID="btnCreateADT" runat="server" Text="Create Unit Plan" Width="200px"  /><p></p>
-            <asp:Button ID="btnDownLoad" runat="server" Text="Download" Width="200px" />
+            <asp:Button ID="btnCreateUP" runat="server" Text="Create Unit Plan" Width="200px" OnClick="btnCreateUP_Click"  /><p></p>
+            <asp:Button ID="btnDownLoad" runat="server" Text="Download" Width="200px" OnClick="btnDownLoad_Click" />
         </div>
     </div>
 </asp:Content>

@@ -368,6 +368,8 @@ namespace BHI2018Web
         {
             //object objMissing = System.Reflection.Missing.Value;
             String path = Environment.CurrentDirectory;
+            //the code above may cause some problem because when you run the application, current directory is in C drive, it might be read only.
+            //In web application, put the template in other drive to make sure it can be filled with data.
             path = "E:\\ADT.doc";
             Microsoft.Office.Interop.Word.Application wordApp = new Microsoft.Office.Interop.Word.Application();
             wordApp.Visible = false;
@@ -387,20 +389,6 @@ namespace BHI2018Web
 
                     return;
                 }
-
-                // get table of key:value codes for cell data
-
-
-                // get tables references
-                foreach (Microsoft.Office.Interop.Word.Table table in document.Tables)
-                {
-                    for (int x = 0; x < table.Columns.Count; x++)
-                    {
-                        // here we check against predefined cell codes, to find out which data is expected in which column of each table
-
-                    }
-                }
-
                 // get Unit Data
                 String SQL;
                 SqlCommand cmd;
@@ -567,13 +555,9 @@ namespace BHI2018Web
                 }
 
                 //Save file
-                // will need to include option to specify file location and filename
-                // will also need to check if file already exists, and prompt before overwriting
+                //the web application is running on the server, this is the path on the server side, not user side.
                 object filename = "E:\\ADT1.doc";
                 document.SaveAs2(ref filename);
-
-                // modified the feedback message to tell you where it actually saved
-                // seriously, how long do you think it took me to find where it was saving to, Man?
                 lblMessageDisplay.Text = "File Generated on server, click download button to download on your PC.";
             }
             catch (Exception ex)
