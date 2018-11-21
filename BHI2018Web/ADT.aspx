@@ -4,6 +4,7 @@
     <div class="jumbotron">
   <h1 class="display-4">Create an ADT</h1>
   <p class="lead">Input Unit Code to create an ADT file.</p>
+
   <hr class="my-4">
 </div>
 
@@ -11,7 +12,7 @@
         <div class="col-md-4">
             <asp:Label ID="lblUnitCode" runat="server" Text="Unit Code: "></asp:Label>  &nbsp<asp:TextBox ID="txbUnitCode" runat="server"></asp:TextBox><p></p>
             <asp:Label ID="lblUnitName" runat="server" Text="Unit Name: "></asp:Label>  <asp:Label ID="lblUnitNameDisplay" runat="server" Text="Show unit name here..."></asp:Label><p>
-                <asp:Button ID="btnSave" runat="server" OnClick="btnSave_Click" Text="Save" />
+                <asp:Button ID="btnSave" runat="server" OnClick="btnSave_Click" Text="Get Unit From TGA" />
             </p>
         </div>
         <div class="col-md-4">

@@ -29,12 +29,8 @@ namespace BHI2018Web
                 String unitTitle = unitCodeName.InnerText;
                 String[] ucn = unitTitle.Split('-');
                 Int32 count = ucn.Count();
-                for (int i = 1; i < count; i++)
-                {
-                    ucn[1] = ucn[1] + ucn[i];
-                }
-                //lblUnitCode.Text = ucn[0].Trim();
-                //lblUnitName.Text = ucn[1].Trim();
+                if(count > 2)
+                    ucn[1] = ucn[1] + ucn[2];
                 return ucn;
             }
             else
@@ -464,7 +460,7 @@ namespace BHI2018Web
                             tableEP.Cell(readCount, 2).Range.Text = reader[2].ToString();
 
                             // add elements     
-                            element = reader[1].ToString();
+                            
 
                             if (oldEleID > -1)
                             {
@@ -486,7 +482,7 @@ namespace BHI2018Web
                                 newRow.Cells.Shading.BackgroundPatternColor = WdColor.wdColorWhite;
                                 newRow.Range.Font.Bold = 0;
                             }
-
+                            element = reader[1].ToString();
                             oldEleID = (int)reader[0];
                         }
 
@@ -516,7 +512,9 @@ namespace BHI2018Web
                             }
                         }
                         for (int i = 0; i < tableFS.Rows.Count; i++)
-                        { tableFS.Cell(i + 3, 3).Range.ListFormat.ApplyBulletDefault(Type.Missing); }
+                        {
+                            tableFS.Cell(i + 3, 3).Range.ListFormat.ApplyBulletDefault(Type.Missing);
+                        }
                     }
 
                     //add Performance Evidence

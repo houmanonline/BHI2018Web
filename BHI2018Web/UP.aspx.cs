@@ -430,7 +430,7 @@ namespace BHI2018Web
                 teacherInformation.Cell(3, 3).Range.Text = teacherTel;
                 //display teacherAvailability in the cell
                 String teacherAvailabilities = null;
-                foreach (string s in topicArray)
+                foreach (string s in teacherAvailabilityArray)
                 {
                     teacherAvailabilities = teacherAvailabilities + s + Environment.NewLine;
                 }
@@ -453,7 +453,7 @@ namespace BHI2018Web
                     }
                 }
 
-                //fill Teacher Information
+                //fill Unit Plan 2
                 Microsoft.Office.Interop.Word.Table unitPlanPart2 = document.Tables[6];
                 //the filled text stored in the ViewState, assign it to a DataTable
                 DataTable filledUnitPlanPart2Table = (DataTable)ViewState["UPTable"];

@@ -201,8 +201,6 @@
 
         </div>
         <div class="col-md-4">
-            <asp:Button ID="btnSave" runat="server" Text="Store in Database" Width="200px"  /><p></p>
-            <asp:Button ID="btnLoad" runat="server" Text="Load from Database" Width="200px" /><p></p>
             <asp:Button ID="btnCreateUP" runat="server" Text="Create Unit Plan" Width="200px" OnClick="btnCreateUP_Click"  /><p></p>
             <asp:Button ID="btnDownLoad" runat="server" Text="Download" Width="200px" OnClick="btnDownLoad_Click" />
         </div>
